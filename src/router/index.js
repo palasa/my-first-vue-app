@@ -6,12 +6,18 @@ import CenterView from '../views/CenterView'
 import NowPlayingView from '../views/Films/NowPlayingView'
 import ComingSoonView from '../views/Films/ComingSoonView'
 import DetailView from '../views/Films/DetailView'
+import LoginView from '../views/LoginView'
 
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView
   },
   {
     path: '/about',
@@ -59,6 +65,13 @@ const routes = [
   }
 ]
 
+// 登录
+// const auth = {
+//   isLogin: () => {
+//     return false
+//   }
+// }
+
 const router = createRouter({
 
   // history / hash 模式
@@ -69,5 +82,22 @@ const router = createRouter({
   // history: createWebHistory(process.env.BASE_URL),
   routes
 })
+// 路由守卫
+// 全局守卫
+// router.beforeEach((to, from, next) => {
+//   // 拦截所有 请求
+//   // console.log(to)
+//   if (to.path === '/center') {
+//     console.log('盘查')
+//     if (auth.isLogin()) {
+//       next()
+//     } else {
+//       next('/login')
+//     }
+//     // 判断是否已登录
+//   } else {
+//     next() // 放行
+//   }
+// })
 
 export default router

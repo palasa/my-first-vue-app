@@ -1,5 +1,5 @@
 <template>
-  <div class="detail">detai view</div>
+  <div class="detail">detail view</div>
 </template>
 
 <script>

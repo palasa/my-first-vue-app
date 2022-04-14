@@ -1,23 +1,23 @@
 
 <template>
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/films">Films</router-link> |
-    <router-link to="/cinema">Cinema</router-link> |
-    <router-link to="/center">Center</router-link> |
-    hello vue
+    <!-- <router-link to="/">Home</router-link> | -->
+    <!-- <router-link to="/about">About</router-link> | -->
+    <router-link to="/films" ><i class="icofont-movie"></i></router-link>
+    <router-link to="/cinema"><i class="icofont-bank-alt"></i></router-link>
+    <router-link to="/center"><i class="icofont-home"></i></router-link>
+    <!-- hello vue
     <input type="text" ref="myText"/>
-    <button @click="handleAdd()">+</button>
+    <button @click="handleAdd()">+</button> -->
 
     <ul>
       <li v-for="(item, index) in items" :key="index">{{item}}</li>
     </ul>
 
-    <navi-bar>
+ <!--    <navi-bar>
       <button @click="isShow=!isShow">click</button>
     </navi-bar>
-    <side-bar v-show="isShow"></side-bar>
+    <side-bar v-show="isShow"></side-bar> -->
   </nav>
 
   <!-- 为路由预留的位置，会把对应的View渲染在这里 -->
@@ -26,13 +26,13 @@
 
 <script>
 
-import SideBar from './components/SideBar'
-import NaviBar from './components/NaviBar'
+// import SideBar from './components/SideBar'
+// import NaviBar from './components/NaviBar'
 // import { vue } from 'vue'
 // vue.component()
 
 export default {
-  components: { NaviBar, SideBar },
+  // components: { NaviBar, SideBar },
   data () {
     return {
       items: [],
@@ -47,12 +47,23 @@ export default {
   },
   mounted () {
     // 跨域，需要在vue.config.js中配置反向代理
-    fetch('/ajax/movieOnInfoList').then(res => res.json()).then(data => console.log(data))
+    // fetch('/maoyan/movieOnInfoList').then(res => res.json()).then(data => console.log(data))
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped >
+*{
+  margin: 0;
+  padding: 0;
+}
+html{
+  height: 100%;
+}
+li{
+  list-style-type: none;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -60,25 +71,45 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
-
+a:visited{
+  color: black;
+}
 nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: white;
+  // padding: 30px;
+  display: flex;
+    a{
+      flex:1;
+      line-height: 50px;
+      text-align: center;
+      font-weight: bold;
+      color: #2c3e50;
+      text-decoration: none;
+      font-size: 30px;
+        &.router-link-exact-active {
+          color: hsl(0, 100%, 36%);
+        }
     }
-  }
+  // a {
+  //   font-weight: bold;
+  //   color: #2c3e50;
+
+  //   &.router-link-exact-active {
+  //     color: #42b983;
+  //   }
+  // }
 }
 
 /* app中添加样式 */
-ul{
-  list-style-type: none;
-  li{
-    background: yellow;
-  }
-}
+// ul{
+//   list-style-type: none;
+//   li{
+//     background: yellow;
+//   }
+// }
 </style>
