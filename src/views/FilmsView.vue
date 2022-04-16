@@ -1,7 +1,10 @@
 <template>
   <div class="films">
-    <swiper ref="swiper" :modules="modules" :pagination="{ clickable: true }" :autoplay="{ delay: 3500, disableOnInteraction: on }">
-      <swiper-slide v-for="n in 5" :key=n>Slide {{n}}</swiper-slide>
+    <!--  -->
+    <swiper ref="swiper" :slides-per-view="1" :space-between="50" @swiper="onSwiper" @slideChange="onSlideChange">
+      <swiper-slide v-for="slider in sliders" :key=slider>
+        <img :src="slider.materialVOList[0].value"/>
+      </swiper-slide>
     </swiper>
     <nav :class="isFixed?'fixed':''">
       <router-link to="/films/nowplaying"><i class="icofont-movie"></i>正在上映</router-link>
@@ -13,12 +16,10 @@
 </template>
 
 <script>
-import { Pagination } from 'swiper'
-import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+import { Swiper, SwiperSlide } from 'swiper/vue'
 
 // import swiper module styles
 import 'swiper/css'
-import 'swiper/css/pagination'
 // more module style...
 
 export default {
@@ -28,10 +29,22 @@ export default {
   },
   data () {
     return {
+      sliders: [],
       isFixed: false
     }
   },
   mounted () {
+    // 获取slider数据
+    const url = 'https://show.maoyan.com/maoyansh/myshow/ajax/ad/detail?uuid=n6rkg8rradti667lbi9i9r1rab0h32xzbi1rwxm2hfas8qe7q52y1pw28gmckxo9&clientType=4&os=2&sellChannel=13&cityId=1&lng=121.4822&lat=31.2624'
+    const myRequest = new Request(url, {
+      method: 'GET',
+      // mode: 'cors',
+      headers: new Headers({
+        'M-APPKEY': 'fe_com.sankuai.movie.showf2e.mmh5',
+        'M-TRACEID': '2659718205366641310'
+      })
+    })
+    fetch(myRequest).then(res => res.json()).then(res => { this.sliders = res.data.middleBannerAds[0].adVOList })
     // 单页面应用会影响其他页面，在进入该页面的时候绑定，离开时解绑
     window.onscroll = this.handleScroll
   },
@@ -51,8 +64,15 @@ export default {
     }
   },
   setup () {
+    const onSwiper = (swiper) => {
+      console.log(swiper)
+    }
+    const onSlideChange = () => {
+      console.log('slide change')
+    }
     return {
-      modules: [Pagination]
+      onSwiper,
+      onSlideChange
     }
   }
 }
@@ -60,7 +80,9 @@ export default {
 
 <style lang="scss" scoped>
   .swiper {
-    height: 200px;
+    img{
+      width: 100%;
+    }
   }
   .fixed{
       position: fixed;
@@ -79,6 +101,12 @@ export default {
       line-height: 50px;
       text-decoration: none;
       font-size: 16px;
+      &.router-link-active {
+        color: rgb(255,95,22);
+      }
+      // &.router-link-exact-active {
+      //   color: rgb(255,95,22);
+      // }
     }
   }
 </style>

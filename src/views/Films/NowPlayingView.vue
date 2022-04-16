@@ -1,12 +1,24 @@
 <template>
   <div class="now-playing">
-    <ul>
-      <li v-for="item in items" :key="item" @click="handleChangePage(item)">
-        <img :src="item.img" />
-        <h3>{{item.nm}}</h3>
-        <p>观众评分：{{item.sc}}</p>
-        <p alt="{{item.star}}">主演：{{item.star}}</p>
-        <p>{{item.showInfo}}</p>
+    <ul class="now-playing-wrap">
+      <li class="now-playing-item" v-for="item in items" :key="item" @click="handleChangePage(item.filmId)">
+        <a class="now-playing-item-wrap">
+          <div class="now-playing-item-image">
+            <img class="target-img" :src='item.poster'/>
+          </div>
+          <div class="now-playing-item-info">
+            <div class="now-playing-film-name info-col">
+              <span class="name">{{item.name}}</span>
+              <span class="item">{{item.item.name}}</span>
+            </div>
+            <div class="now-playing-film-actors info-col">
+              <span class="label">主演：<span v-for="actor in item.actors" :key="actor">{{actor.name}}&nbsp;</span></span>
+            </div>
+            <div class="now-playing-film-detail info-col">
+              <span class="label">上映日期：<span>{{item.premiereAt}}</span></span>
+            </div>
+          </div>
+        </a>
       </li>
     </ul>
   </div>
@@ -20,21 +32,28 @@ export default {
     }
   },
   mounted () {
-    // const url = '/maizuo/gateway?cityId=110100&pageNum=1&pageSize=1&type=1&k=4271989'
-    // const myRequest = new Request(url, {
-    //   method: 'GET',
-    //   // mode: 'cors',
-    //   cache: 'default',
-    //   headers: new Headers({
-    //     'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.0.4","e":"15610855429195524981146"}',
-    //     'X-Host': 'mall.film.ticket.film.list'
-    //   })
-    // })
-    // fetch(myRequest).then(res => { console.log(res); return res.json() }).then(data => console.log(data))
-    fetch('/ajax/movieOnInfoList').then(res => res.json()).then(data => { this.items = data.movieList; console.log(this.items) })
+    const url = 'https://m.maizuo.com/gateway?cityId=110100&pageNum=1&pageSize=10&type=1&k=5080875'
+    const myRequest = new Request(url, {
+      method: 'GET',
+      // mode: 'cors',
+      headers: new Headers({
+        'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"164994640625984552140801","bc":"110100"}',
+        'X-Host': 'mall.film-ticket.film.list'
+      })
+    })
+    fetch(myRequest).then(res => res.json()).then(res => { this.items = res.data.films })
+
+    // fetch('/ajax/movieOnInfoList').then(res => res.json()).then(data => { this.items = data.movieList; console.log(this.items) })
+    // axios({
+    //   url: url,
+    //   headers: {
+    //     'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"164994640625984552140801","bc":"110100"}',
+    //     'X-Host': 'mall.film-ticket.film.list'
+    //   }
+    // }).then(res => { console.log(res.data.data); this.items = res.data.data.films })
   },
   methods: {
-    handleChangePage (item) {
+    handleChangePage (filmId) {
       // console.log(index)
       // 编程式导航，通过路径跳转
       // this.$router.push(`/detail/${index}`)
@@ -44,7 +63,7 @@ export default {
       this.$router.push({
         name: 'filmDetail',
         params: {
-          filmId: item.id
+          filmId: filmId
         }
       })
     }
@@ -75,6 +94,8 @@ export default {
       }
       h3{
         margin: 0;
+        font-weight: 400;
+        color: rgb(25,25,25)
       }
     }
   }
