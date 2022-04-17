@@ -8,7 +8,7 @@
         <span class="grade">{{filmInfo.grade}}<small>分</small></span>
       </h3>
       <div class="film-info-category">{{filmInfo.category}}</div>
-      <div class="film-on-cinema">{{ getDate(filmInfo.premiereAt) }}上映 </div>
+      <div class="film-on-cinema">{{ getFullDate(filmInfo.premiereAt) }}上映 </div>
       <div class="film-info-nation">{{filmInfo.nation}} | {{filmInfo.runtime}}分钟 </div>
       <div class="film-info-synopsis">{{filmInfo.synopsis}}</div>
     </section>
@@ -36,6 +36,8 @@
 <script>
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
+import { getFullDate } from '@/libs/DateTime'
+import { HIDE_NAVIBAR_MUTATION, SHOW_NAVIBAR_MUTATION } from '@/mutation-types/index'
 // import bus from 'vue3-eventbus'
 export default {
   components: {
@@ -48,16 +50,7 @@ export default {
     }
   },
   computed: {
-    getDate: () => {
-      return (timeStamp) => {
-        const time = new Date(timeStamp * 1000)
-        // console.log(timeStamp, time)
-        const year = time.getFullYear()
-        const month = time.getMonth() + 1
-        const date = time.getDate()
-        return `${year}年${month}月${date}日`
-      }
-    }
+    getFullDate
   },
   methods: {
     handleGoBackClick () {
@@ -69,7 +62,7 @@ export default {
     // this.$store.state.isNavibarShow = false
 
     // 使用mutation
-    this.$store.commit('HideNavibar', false)
+    this.$store.commit(HIDE_NAVIBAR_MUTATION, false)
   },
   mounted () {
     // console.log(this.$route.params.filmId)
@@ -86,7 +79,7 @@ export default {
   },
   unmounted () {
     // bus.emit('bottomNavibar', true)
-    this.$store.commit('ShowNavibar', true)
+    this.$store.commit(SHOW_NAVIBAR_MUTATION, true)
   },
   setup () {
     return {}

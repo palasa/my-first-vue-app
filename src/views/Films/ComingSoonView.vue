@@ -3,10 +3,10 @@
     <ul class="coming-soon-wrap">
       <li class="coming-soon-item" v-for="item in $store.state.comingSoonList" :key="item.filmId">
         <a class="coming-soon-item-wrap">
-          <div class="comming-soon-item-image">
+          <div class="coming-soon-item-image">
             <img class="target-img" :src='item.poster'/>
           </div>
-          <div class="comming-soon-item-info">
+          <div class="coming-soon-item-info">
             <div class="coming-soon-film-name info-col">
               <span class="name">{{item.name}}</span>
               <span class="item">{{item.item.name}}</span>
@@ -15,7 +15,10 @@
               <span class="label">主演：<span v-for="actor in item.actors" :key="actor">{{actor.name}}&nbsp;</span></span>
             </div>
             <div class="coming-soon-film-detal info-col">
-              <span class="label">上映日期：<span>{{item.premiereAt}}</span></span>
+              <span class="label">上映日期：
+                <span>{{getWeekday(item.premiereAt)}}&nbsp;</span>
+                <span>{{getMonthAndDay(item.premiereAt)}}</span>
+              </span>
             </div>
           </div>
         </a>
@@ -26,16 +29,22 @@
 </template>
 
 <script>
+import { getMonthAndDay, getWeekday } from '@/libs/DateTime'
 export default {
 
   mounted () {
     if (this.$store.state.comingSoonList.length === 0) {
       // Vue Component dispatch to action
-      this.$store.dispatch('getComingSoonListAction')
+      this.$store.dispatch('getComingSoonListAction').then()
     } else {
       // use cache
+      // console.log('use cache')
     }
+  },
+  computed: {
+    getMonthAndDay, getWeekday
   }
+
 }
 </script>
 
@@ -57,15 +66,16 @@ export default {
       justify-content: flex-start;
       -webkit-box-align: center;
       align-items: center;
-      .comming-soon-item-image{
+      .coming-soon-item-image{
         float: left;
         width:66px;
         height: 94px;
         .target-img{
           width: 64px;
+          border-radius: 2px;
         }
       }
-      .comming-soon-item-info{
+      .coming-soon-item-info{
         float:left;
         padding: 0 10px;
         width: calc(100% - 116px);

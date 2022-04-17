@@ -6,21 +6,17 @@
         <img :src="slider.materialVOList[0].value"/>
       </swiper-slide>
     </swiper>
-    <nav :class="isFixed?'fixed':''">
-      <router-link to="/films/nowplaying"><i class="icofont-movie"></i>正在上映</router-link>
+    <nav class="onShow" :class="isFixed?'fixed':''">
+      <router-link to="/films/nowplaying">正在上映</router-link>
       <router-link to="/films/comingsoon">即将上映</router-link>
     </nav>
-    <hr/>
     <router-view/>
   </div>
 </template>
 
 <script>
 import { Swiper, SwiperSlide } from 'swiper/vue'
-
-// import swiper module styles
 import 'swiper/css'
-// more module style...
 
 export default {
   components: {
@@ -65,10 +61,10 @@ export default {
   },
   setup () {
     const onSwiper = (swiper) => {
-      console.log(swiper)
+      // console.log(swiper)
     }
     const onSlideChange = () => {
-      console.log('slide change')
+      // console.log('slide change')
     }
     return {
       onSwiper,
@@ -89,12 +85,13 @@ export default {
       left: 0;
       top:0;
       width: 100%;
-      background: lightblue;
+      background: white;
   }
   nav{
     display: flex;
     height: 50px;
     width: 100%;
+    border-bottom: 1px solid rgb(235,235,235);
     a{
       flex: 1;
       text-align: center;

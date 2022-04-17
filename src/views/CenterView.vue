@@ -1,7 +1,7 @@
 <template>
   <div class="center">
-    <img alt="Vue logo" src="../assets/logo.png">
     center
+    <el-button type="danger" plain round :loading="true">button</el-button>
   </div>
 </template>
 

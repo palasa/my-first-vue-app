@@ -1,6 +1,6 @@
 
 <template>
-  <nav v-if="$store.state.isNavibarShow">
+  <nav v-if="isNavibarShow">
     <router-link to="/films" ><i class="icofont-movie"></i></router-link>
     <router-link to="/cinema"><i class="icofont-bank-alt"></i></router-link>
     <router-link to="/center"><i class="icofont-home"></i></router-link>
@@ -24,16 +24,14 @@ export default {
   // components: { NaviBar, SideBar },
   data () {
     return {
-      items: [],
-      isShow: true
+      items: []
     }
   },
-  // methods: {
-  //   handleAdd () {
-  //     console.log('1111')
-  //     this.items.push(this.$refs.myText.value)
-  //   }
-  // },
+  methods: {
+    isNavibarShow () {
+      return this.$store.state.isNavibarShow
+    }
+  },
   mounted () {
     // 跨域，需要在vue.config.js中配置反向代理
     // fetch('/maoyan/movieOnInfoList').then(res => res.json()).then(data => console.log(data))
@@ -89,26 +87,12 @@ nav {
       color: #2c3e50;
       text-decoration: none;
       font-size: 30px;
-        &.router-link-exact-active {
-          color: hsl(0, 100%, 36%);
-        }
     }
   a {
-
     &.router-link-active {
-      color: rgb(255,95,22);
-    }
-    &.router-link-exact-active {
       color: rgb(255,95,22);
     }
   }
 }
 
-/* app中添加样式 */
-// ul{
-//   list-style-type: none;
-//   li{
-//     background: yellow;
-//   }
-// }
 </style>
