@@ -8,11 +8,17 @@ import ComingSoonView from '../views/Films/ComingSoonView'
 import DetailView from '../views/Films/DetailView'
 import LoginView from '../views/LoginView'
 
+import TestView from '@/views/TestView'
+
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/test',
+    component: TestView
   },
   {
     path: '/login',
