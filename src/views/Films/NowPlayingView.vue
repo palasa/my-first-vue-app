@@ -1,7 +1,15 @@
 <template>
   <div class="now-playing">
-    <ul class="now-playing-wrap">
-      <li class="now-playing-item" v-for="film in items" :key="film" @click="handleChangePage(film.filmId)">
+    <nut-infiniteloading
+        containerId = 'scroll'
+        :use-window='false'
+        :has-more="isHasMore"
+        :is-loading="isLoading"
+        :threshold="500"
+        :is-show-mod="true"
+        @loadmore="loadMore">
+    <ul class="now-playing-wrap" id="scroll">
+      <!-- <li class="now-playing-item" v-for="film in items" :key="film" @click="handleChangePage(film.filmId)">
         <a class="now-playing-item-wrap">
           <div class="now-playing-item-image">
             <img class="target-img" :src='film.poster'/>
@@ -22,16 +30,26 @@
             </div>
           </div>
         </a>
-      </li>
+      </li> -->
+      <li style="height:100px" class="infiniteLi" v-for="(item, index) of data" :key="index">我是测试数据{{ index + 1 }}</li>
     </ul>
+    </nut-infiniteloading>
   </div>
 </template>
 
 <script>
+// import { reactive, ref, onMounted, toRefs } from 'vue'
 export default {
   data () {
     return {
-      items: []
+      items: [],
+      data: new Array(30),
+      page: 2,
+      num: 30,
+      isHasMore: true,
+      isLoading: false,
+      isErr: false,
+      timer: null
     }
   },
   mounted () {
@@ -60,7 +78,49 @@ export default {
           filmId: filmId
         }
       })
+    },
+    loadMore () {
+      console.log('begin load')
+      this.isLoading = true
+      this.timer = setTimeout(() => {
+        if (this.page <= 5) {
+          this.data = new Array(this.num * this.page)
+          this.page = this.page + 1
+        } else {
+          this.isHasMore = false
+        }
+        this.isLoading = false
+      }, 500)
     }
+  },
+  setup () {
+    // const hasMore = ref(true)
+    // const data = reactive({
+    //   defaultList: []
+    // })
+    // const loadMore = done => {
+    //   console.log('load more')
+    //   setTimeout(() => {
+    //     const curLen = data.defaultList.length
+    //     for (let i = curLen; i < curLen + 10; i++) {
+    //       data.defaultList.push(`${i}`)
+    //     }
+    //     if (data.defaultList.length > 30) hasMore.value = false
+    //     done()
+    //   }, 500)
+    // }
+    // const init = () => {
+    //   for (let i = 0; i < 10; i++) {
+    //     data.defaultList.push(`${i}`)
+    //   }
+    // }
+    // onMounted(() => {
+    //   init()
+    // })
+    // return { loadMore, hasMore, ...toRefs(data) }
+  },
+  unmounted () {
+    clearTimeout(this.timer)
   }
 }
 </script>

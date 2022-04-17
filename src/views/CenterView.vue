@@ -1,9 +1,9 @@
-<template>
-  <div class="center">
-    center
-    <el-button type="danger" plain round :loading="true">button</el-button>
-  </div>
-</template>
+// <template>
+//   <div class="center">
+//     center
+//     <el-button type="danger" plain round :loading="true">button</el-button>
+//   </div>
+// </template>
 
 <script>
 const auth = {
