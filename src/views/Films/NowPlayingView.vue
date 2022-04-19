@@ -1,13 +1,12 @@
 <template>
   <div class="now-playing">
-
-    <ul class="now-playing-wrap" id="scroll" >
+    <!-- <nut-cell title="Loading带透明罩" is-link @click="textToast('加载中')"></nut-cell> -->
+    <ul class="now-playing-wrap" >
       <nut-infiniteloading
-        containerId = 'scroll'
         :use-window='true'
         :has-more="hasMore"
         @load-more="loadMore">
-      <!-- <li class="now-playing-item" v-for="film in items" :key="film" @click="handleChangePage(film.filmId)">
+        <li class="now-playing-item" v-for="film in films" :key="film" @click="handleChangePage(film.filmId)">
         <a class="now-playing-item-wrap">
           <div class="now-playing-item-image">
             <img class="target-img" :src='film.poster'/>
@@ -28,34 +27,18 @@
             </div>
           </div>
         </a>
-      </li> -->
-      <li style="height:100px" class="infiniteLi" v-for="(item, index) of defultList" :key="index">我是测试数据{{ index + 1 }}</li>
+      </li>
       </nut-infiniteloading>
     </ul>
-
   </div>
 </template>
 
 <script>
+import { Toast } from '@nutui/nutui'
 import { reactive, ref, onMounted, toRefs } from 'vue'
+
 export default {
-  data () {
-    return {
-      items: []
-    }
-  },
-  mounted () {
-    const url = 'https://m.maizuo.com/gateway?cityId=110100&pageNum=1&pageSize=10&type=1&k=5080875'
-    const myRequest = new Request(url, {
-      method: 'GET',
-      // mode: 'cors',
-      headers: new Headers({
-        'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"164994640625984552140801","bc":"110100"}',
-        'X-Host': 'mall.film-ticket.film.list'
-      })
-    })
-    fetch(myRequest).then(res => res.json()).then(res => { console.log(res.data.films); this.items = res.data.films })
-  },
+
   methods: {
     handleChangePage (filmId) {
       // console.log(index)
@@ -63,43 +46,68 @@ export default {
       // this.$router.push(`/detail/${index}`)
 
       // 编程式导航， 通过name 跳转
-      // console.log(item)
       this.$router.push({
         name: 'filmDetail',
         params: {
           filmId: filmId
         }
       })
-    },
-    handleScroll () {
-      console.log('scroll')
     }
   },
-  setup () {
-    const hasMore = ref(true)
+  setup (props) {
+    let pageNum = 1
     const data = reactive({
-      defultList: []
+      films: []
     })
+    let hasMore = ref(true)
+
+    const textToast = msg => {
+      Toast.loading(msg, {
+        cover: true,
+        duration: 30000,
+        bgColor: 'rgba(0, 0, 0, 0.65)'
+      })
+    }
+
+    const getData = pageNum => {
+      return new Promise((resolve, reject) => {
+        textToast('加载中')
+        const url = `https://m.maizuo.com/gateway?cityId=110100&pageNum=${pageNum}&pageSize=10&type=1&k=5080875`
+        const myRequest = new Request(url, {
+          method: 'GET',
+          // mode: 'cors',
+          headers: new Headers({
+            'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"164994640625984552140801","bc":"110100"}',
+            'X-Host': 'mall.film-ticket.film.list'
+          })
+        })
+        fetch(myRequest).then(res => res.json()).then(res => {
+          resolve(res.data)
+          Toast.hide()
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    }
+
     const loadMore = done => {
       console.log('now loading')
-      setTimeout(() => {
-        const curLen = data.defultList.length
-        for (let i = curLen; i < curLen + 10; i++) {
-          data.defultList.push(`${i}`)
+      getData(++pageNum).then(res => {
+        const newData = res.films
+        data.films = [...data.films, ...newData]
+        // console.log(pageNum, data.films)
+        if (data.films.length >= res.total) {
+          hasMore = false
         }
-        if (data.defultList.length > 30) hasMore.value = false
         done()
-      }, 500)
-    }
-    const init = () => {
-      for (let i = 0; i < 10; i++) {
-        data.defultList.push(`${i}`)
-      }
+      })
     }
     onMounted(() => {
-      init()
+      getData(pageNum).then(res => {
+        data.films = res.films
+      })
     })
-    return { loadMore, hasMore, ...toRefs(data) }
+    return { hasMore, getData, textToast, loadMore, ...toRefs(data) }
   }
 }
 </script>

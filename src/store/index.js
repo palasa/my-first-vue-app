@@ -39,6 +39,7 @@ export default createStore({
           'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"164994640625984552140801","bc":"110100"}'
         }
       }).then(res => {
+        console.log(res.data.data.films)
         store.commit(FILL_COMING_SOON_LIST_MUTATION, res.data.data.films) // commit to mutation
       })
     }

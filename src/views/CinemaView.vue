@@ -2,7 +2,7 @@
   <div class="cinema" v-if="cinemas">
     <header class="header">
       <div class="left">
-        <div class="city">北京<i class="icofont-curved-down"></i></div>
+        <div class="city" @click="handleSelectCity">北京<i class="icofont-curved-down"></i></div>
       </div>
       <div class="title">影院</div>
       <div class="right">
@@ -45,6 +45,11 @@ export default {
       }
     }
   },
+  methods: {
+    handleSelectCity () {
+      this.$router.push('/city')
+    }
+  },
   mounted () {
     this.myStyle.height = document.documentElement.clientHeight - 50 + 'px'
 
@@ -71,6 +76,9 @@ export default {
         })
       })
     })
+  },
+  setup () {
+
   }
 }
 </script>
@@ -155,16 +163,6 @@ export default {
    padding-bottom: 49px;
    z-index: 100;
    overflow: hidden;
-  //  ul {
-    //  margin: 94px 0;
-    //  height: 800px;
-    //  overflow: hidden;
-    //  position: relative;
-    //  backface-visibility: hidden;
-    //  perspective: 1000;
-    //  -webkit-overflow-scrolling: touch;
-  //  }
-
    li{
      padding: 15px;
      height: 45px;

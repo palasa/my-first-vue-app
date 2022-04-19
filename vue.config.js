@@ -9,6 +9,11 @@ module.exports = defineConfig({
         target: 'https://i.maoyan.com',
         // ws:true,
         changeOrgin: true
+      },
+      '/maoyan': {
+        target: 'https://i.maoyan.com',
+        changeOrgin: true,
+        pathRewrite: { '^/maoyan': '/' }
       }
       // https://m.maizuo.com/gateway?cityId=110100&pageNum=1&pageSize=10&type=1&k=5080875
       // '/gateway': {

@@ -38,6 +38,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import { getFullDate } from '@/libs/DateTime'
 import { HIDE_NAVIBAR_MUTATION, SHOW_NAVIBAR_MUTATION } from '@/mutation-types/index'
+import { Dialog } from '@nutui/nutui'
 // import bus from 'vue3-eventbus'
 export default {
   components: {
@@ -75,14 +76,22 @@ export default {
       })
     })
     fetch(myRequest).then(res => res.json()).then(res => { console.log(res.data); this.filmInfo = res.data.film })
-    // console.log(this.filmInfo)
+    // 无预售，则弹框
+    if (this.$route.params.isPresale === 'false') {
+      Dialog({
+        title: '目前没有排期，看看其他电影吧',
+        // content: 'message to show',
+        // onCancel: () => { console.log('cancel') },
+        onOk: () => { this.$router.back(-1) }
+      })
+    }
   },
   unmounted () {
     // bus.emit('bottomNavibar', true)
     this.$store.commit(SHOW_NAVIBAR_MUTATION, true)
   },
   setup () {
-    return {}
+    return { }
   }
 }
 </script>

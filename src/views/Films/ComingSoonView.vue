@@ -2,7 +2,7 @@
   <div class="coming-soon">
     <ul class="coming-soon-wrap">
       <li class="coming-soon-item" v-for="item in $store.state.comingSoonList" :key="item.filmId">
-        <a class="coming-soon-item-wrap">
+        <a class="coming-soon-item-wrap" @click="handleClick(item.filmId,item.isPresale)">
           <div class="coming-soon-item-image">
             <img class="target-img" :src='item.poster'/>
           </div>
@@ -20,6 +20,9 @@
                 <span>{{getMonthAndDay(item.premiereAt)}}</span>
               </span>
             </div>
+          </div>
+          <div class="coming-soon-item-buy" v-if="item.isPresale">
+            预购
           </div>
         </a>
       </li>
@@ -43,6 +46,17 @@ export default {
   },
   computed: {
     getMonthAndDay, getWeekday
+  },
+  methods: {
+    handleClick (filmId, isPresale) {
+      this.$router.push({
+        name: 'filmDetail',
+        params: {
+          filmId: filmId,
+          isPresale: isPresale
+        }
+      })
+    }
   }
 
 }
@@ -109,6 +123,18 @@ export default {
             color: rgb(120,120,120);
           }
         }
+      }
+      .coming-soon-item-buy{
+        float: right;
+        height: 25px;
+        line-height: 25px;
+        width: 50px;
+        color: orange;
+        font-size: 13px;
+        text-align: center;
+        border-radius: 4px;
+        border: 1px solid orange;
+        font-weight: 800;
       }
     }
   }

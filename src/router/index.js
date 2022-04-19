@@ -7,6 +7,7 @@ import NowPlayingView from '../views/Films/NowPlayingView'
 import ComingSoonView from '../views/Films/ComingSoonView'
 import DetailView from '../views/Films/DetailView'
 import LoginView from '../views/LoginView'
+import CityView from '../views/CityView'
 
 import TestView from '@/views/TestView'
 
@@ -19,6 +20,10 @@ const routes = [
   {
     path: '/test',
     component: TestView
+  },
+  {
+    path: '/city',
+    component: CityView
   },
   {
     path: '/login',
