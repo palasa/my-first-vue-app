@@ -1,11 +1,15 @@
 <template>
   <div class="center">
-    center
-    <el-button type="danger" plain round :loading="true">button</el-button>
+    <div>
+      center
+      <el-button type="danger" plain round :loading="true">button</el-button>
+    </div>
   </div>
 </template>
 
 <script>
+// import { VueTouch } from '@/vue-touch/vue-touch.js'
+
 const auth = {
   isLogin: () => {
     return false

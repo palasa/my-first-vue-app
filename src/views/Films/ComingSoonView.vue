@@ -92,7 +92,7 @@ export default {
       .coming-soon-item-info{
         float:left;
         padding: 0 10px;
-        width: calc(100% - 116px);
+        width: calc(100% - 150px);
         .coming-soon-film-name{
           .name{
             height: 22px;

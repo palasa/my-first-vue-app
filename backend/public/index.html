@@ -1,1 +1,190 @@
-<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>my-app</title><script defer="defer" src="/js/chunk-vendors.3b773d33.js"></script><script defer="defer" src="/js/app.2b50b14a.js"></script><link href="/css/app.036a7e03.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but my-app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="index.css">
+	<title>Document</title>
+</head>
+<body>
+	<!-- 选择地区 -->
+	<article class="country" ref="listview" v-show="countryList.length>0"  v-cloak @scroll="setScrollY">
+    <ul class="country-list">
+        <li v-for="group in countryList" ref="listGroup">
+            <h2 class="list-group-title">{{group.title}}</h2>
+            <ul>
+              <li v-for="item in group.items" :class="[{active:phoneCode==item.code},'list-group-item']" @click="phoneCode=item.code">
+                <span class="name">{{lang=='cn'?item.name_cn:item.name_en}}</span>
+                <span>(+{{item.code}})</span>
+              </li>
+            </ul>
+        </li>
+    </ul>
+    <ul class="list-shortcut" @click.stop.prevent="onShortcutTouchStart"  @touchstart="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove" @touchend.stop.prevent="onShortcutTouchEnd">
+        <li @mouseover.stop.prevent="onMouseover(index)" @mouseout.stop.prevent="onShortcutTouchEnd" :class="[{selected:fixedTitle==item},'item']" v-for="(item,index) in shortcut">{{item}}</li>
+    </ul>
+  	<div class="selected-shortcut" v-show="isTouch">{{fixedTitle}}</div>
+    <div class="list-fixed" v-show="fixedTitle" ref="fixed">{{fixedTitle}}</div>
+	</article>
+<script src="./js/jquery-3.2.1.js"></script>
+<script src="./js/vue.js"></script>
+<script src="./js/pinyin_dict_notone.js"></script>
+<script src="./js/pinyinUtil.js"></script>
+<script type="text/javascript">
+$(function() {
+  new Vue({
+    el: ".country",
+    data: {
+      isTouch:false,
+      countryList: [],
+      shortcut: [],
+      phoneCode: '93',
+      touch: {},
+      listHeight: [],
+      scrollY: -1,
+      currentIndex: 0,
+      diff: -1,
+      fixedTop: -1,
+      lang:'cn',
+    },
+    created() {
+      // 根据浏览器语言判断中文还是英文
+      var navLanguage = (navigator.browserLanguage || navigator.language).toLowerCase().slice(0,2);
+      if(navLanguage=='zh'){
+        this.lang='cn'
+      }else{
+        this.lang='en';
+      }
+      // 获取国家列表
+      this.getCountryList();
+    },
+    computed: {
+      fixedTitle() {
+        return this.shortcut[this.currentIndex] ? this.shortcut[this.currentIndex] : 'A'
+      }
+    },
+    mounted() {
+      setTimeout(()=>{
+        this.calculateTotalHeight()
+      }, 200)
+    },
+    methods: {
+      setScrollY(){
+        this.scrollY = $('.country').scrollTop()
+      },
+      getCountryList() {
+        $.getJSON('./js/country.json', (res)=>{
+          // 格式化数据
+          var map = {};
+          var sortKey = this.lang == "cn" ? "name_cn" : "name_en";
+          res.forEach((item, index) => {
+            // 中文按照拼音首字母进行筛选分组，英文根据单词首字母分组
+            var key = this.lang=='cn'?pinyinUtil.getPinyin(item[sortKey]).slice(0, 1).toUpperCase():item[sortKey].slice(0,1);
+            if (!map[key]) {
+              this.shortcut.push(key)
+              map[key] = {
+                title: key,
+                items: []
+              }
+            }
+            map[key].items.push(item);
+          })
+          // 转为数组
+          var ret = [];
+          for (var k in map) {
+            var val = map[k];
+            ret.push(val);
+          }
+          // 对首字母排序
+          ret.sort((a, b)=>{
+            return a.title.charCodeAt(0) - b.title.charCodeAt(0);
+          });
+
+          this.shortcut.sort((a, b) =>{
+            return a.charCodeAt(0) - b.charCodeAt(0);
+          });
+
+          // 对每个国家进行排序
+          ret.map(v => {
+            v.items.sort((a, b) => {
+              return a[sortKey].localeCompare(b[sortKey]);
+            });
+          });
+          this.countryList = ret;
+        })
+      },
+      onShortcutTouchStart(e) {
+        let anchorIndex = this.shortcut.indexOf(e.target.innerText);
+        this.touch.y1 = e.pageY ? e.pageY : e.touches[0].pageY
+        this.touch.anchorIndex = anchorIndex;
+        this.scrollToIndex(anchorIndex);
+        this.isTouch = true;
+      },
+      onShortcutTouchMove(e) {
+        this.touch.y2 = e.touches[0].pageY
+        var delta = (this.touch.y2 - this.touch.y1) / 16 | 0
+        var anchorIndex = parseInt(this.touch.anchorIndex) + parseInt(delta)
+        this.scrollToIndex(anchorIndex);
+        this.isTouch = true;
+      },
+      onShortcutTouchEnd(){
+        this.isTouch = false;
+      },
+      onMouseover(index){
+        this.touch.anchorIndex = index;
+        this.scrollToIndex(index);
+        this.isTouch = true;
+      },
+      scrollToIndex(index) {
+        this.$refs.listview.scrollTo(0, this.listHeight[index])
+      },
+      calculateTotalHeight() {
+        var list = this.$refs.listGroup
+        var height = 0
+        this.listHeight.push(height)
+        if(list&&list.length>0){
+          for (var i = 0; i < list.length; i++) {
+            var item = list[i]
+            height += item.clientHeight
+            this.listHeight.push(height)
+          }
+        }
+      }
+    },
+    watch: {
+      scrollY(newY) {
+        var listHeight = this.listHeight
+        // 当滚动到顶部时， newY<=0
+        if (newY <= 0) {
+          this.currentIndex = 0
+          return
+        }
+        // 中间部分滚动
+        for (var i = 0; i < listHeight.length - 1; i++) {
+          var height1 = listHeight[i]
+          var height2 = listHeight[i + 1]
+          if (!height2 || (newY >= height1 && newY < height2)) {
+            this.currentIndex = i
+            this.diff = height2 - newY
+            return
+          }
+        }
+        // 滚动到底部且newY大于最后一个元素的上限
+        this.currentIndex = listHeight.length - 1
+      },
+      diff(newVal) {
+        var fixedTop = (newVal - 24) < 0 ? newVal - 24 : 0
+        if (this.fixedTop === fixedTop) {
+          return false;
+        }
+        this.fixedTop = fixedTop
+        this.$refs.fixed.style.transform = `translate3d(-50%,${fixedTop}px,0)`
+      }
+    }
+  })
+})
+
+</script>
+
+</body>
+</html>
